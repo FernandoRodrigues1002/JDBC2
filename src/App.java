@@ -3,9 +3,6 @@ import db.DB;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 public class App {
 
@@ -13,30 +10,24 @@ public class App {
         Connection conn = null;
         PreparedStatement st = null;
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-
         try {
             conn = DB.getConnection();
 
             st = conn.prepareStatement(
-                    "INSERT INTO seller"
-                    + "(Name, Email, BirthDate, BaseSalary, DepartmentId)"
-                    + "VALUES"
-                    + "(?,?,?,?,?)",
-                    Statement.RETURN_GENERATED_KEYS
+                    "UPDATE seller "
+                    + "SET BaseSalary = BaseSalary + ? "
+                    + "WHERE "
+                    + "(DepartmentId = ?)"
             );
-            st.setString(1, "Nando");
-            st.setString(2, "Nando@mail.com");
-            st.setDate(3, new java.sql.Date(sdf.parse("25/03/2004").getTime()));
-            st.setDouble(4, 3000.00);
-            st.setInt(5, 3);
 
-            st.executeUpdate();
+            st.setDouble(1, 200);
+            st.setInt(2, 2);
+
+            int rows = st.executeUpdate();
+
+            System.out.println("linhas afetadas: " + rows);
 
         } catch (SQLException e) {
-            e.printStackTrace();
-
-        } catch (ParseException e) {
             e.printStackTrace();
 
         } finally {
